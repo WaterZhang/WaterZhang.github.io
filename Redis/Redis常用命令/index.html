@@ -1,0 +1,173 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Redis常用命令 | 寻找水世界</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Redis常用命令</h1><a id="logo" href="/.">寻找水世界</a><p class="description">纵容的 喜欢的 厌倦的 宠溺的</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/reading/"><i class="fa fa-book"> 阅读</i></a><a href="/movie/"><i class="fa fa-video"> 电影</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Redis常用命令</h1><div class="post-meta">2017-02-06<span> | </span><span class="category"><a href="/categories/Redis/">Redis</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#初识"><span class="toc-number">1.</span> <span class="toc-text">初识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据库比较"><span class="toc-number">1.1.</span> <span class="toc-text">数据库比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis数据同步"><span class="toc-number">1.2.</span> <span class="toc-text">Redis数据同步</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用数据结构"><span class="toc-number">2.</span> <span class="toc-text">常用数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#命令"><span class="toc-number">3.</span> <span class="toc-text">命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#STRING"><span class="toc-number">3.1.</span> <span class="toc-text">STRING</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LIST"><span class="toc-number">3.2.</span> <span class="toc-text">LIST</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SET"><span class="toc-number">3.3.</span> <span class="toc-text">SET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HASH"><span class="toc-number">3.4.</span> <span class="toc-text">HASH</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sorted-SET"><span class="toc-number">3.5.</span> <span class="toc-text">Sorted SET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#publish-subscribe"><span class="toc-number">3.6.</span> <span class="toc-text">publish/subscribe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他命令"><span class="toc-number">3.7.</span> <span class="toc-text">其他命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="post-content"><p>上一篇，我在电脑上安装了windows版本的redis，使用Jedis编写代码测试。然后。。。停顿了好长时间没有继续学习。</p>
+<h2 id="初识"><a href="#初识" class="headerlink" title="初识"></a>初识</h2><p>Redis，内存分布式数据库，支持5种数据类型（不确定），提供持久化支持，是近几年火起来的NOSQL。</p>
+<h3 id="数据库比较"><a href="#数据库比较" class="headerlink" title="数据库比较"></a>数据库比较</h3><table>
+<thead>
+<tr>
+<th>数据库</th>
+<th>类型</th>
+<th>数据存储</th>
+<th>查询类型</th>
+<th>额外功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Redis</td>
+<td>内存非关系型</td>
+<td>String，List，Set，Hash，Sorted Set</td>
+<td>CURD，批量处理，部分事务支持</td>
+<td>订阅/取消服务 主从复制</td>
+</tr>
+<tr>
+<td>memcached</td>
+<td>内存非关系型</td>
+<td>mapping key to value</td>
+<td>CURD</td>
+<td>并发集群服务</td>
+</tr>
+<tr>
+<td>mysql</td>
+<td>关系型</td>
+<td>常用数据</td>
+<td>CURD，sp</td>
+<td>ACID，主从结构</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>关系型</td>
+<td>常用数据</td>
+<td>CURD，sp</td>
+<td>ACID，主从结构，第三方扩展</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>磁盘非关系型文件存储</td>
+<td>BSON documents</td>
+<td>CURD</td>
+<td>map-redusce，主从，集群</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Redis数据同步"><a href="#Redis数据同步" class="headerlink" title="Redis数据同步"></a>Redis数据同步</h3><p>Redis有两种同步方式，将内存数据备份至磁盘：</p>
+<ul>
+<li>point-in-time dump ， 当一个确切的事情发生（一段时间内，满足一定量的写次数）或者执行dump-to-disk命令</li>
+<li>append-only file，灵活配置，从不同步到每秒同步，以及同步每一个操作。</li>
+</ul>
+<h2 id="常用数据结构"><a href="#常用数据结构" class="headerlink" title="常用数据结构"></a>常用数据结构</h2><p>STRING，LIST，SET，HASH，ZSET。五种数据结构共享命令，DEL，TYPE，RENAME以及其他。<br>STRING，支持字符串，整型，浮点型。整型和浮点型可以自增，自减。<br>LIST，字符串列表。支持push/pop，可以在队头以及队尾操作。<br>SET，未排序的唯一集合。<br>HASH，存储键值对。<br>ZSET，排序列表。</p>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p>这里有个<a href="http://www.redis.cn/" target="_blank" rel="noopener">Redis中文网站</a>，方便检索Redis知识，以及Command。</p>
+<p>我这里只是列出相关命令用法，简单说明。详细的用例以及相关参数说明，可以去网站中查询。</p>
+<h3 id="STRING"><a href="#STRING" class="headerlink" title="STRING"></a>STRING</h3><ol>
+<li>INCR key-name 自增1</li>
+<li>DECR key-name 自减1</li>
+<li>INCRBY key-name amount 自增提供的值</li>
+<li>DECRBY key-name amount 自减提供的值</li>
+<li>INCRBYFLOAT key-name amount 自增提供的浮点值</li>
+</ol>
+<p>对字符串操作，<br><strong>下标是从0开始的，跟Java语言一样。</strong></p>
+<ol>
+<li>APPEND key-name value 拼接字符串至末尾</li>
+<li>GETRANGE key-name start end  获取子串（包含下标）</li>
+<li>SETRANGE key-name offset value  设置子串，从指定下标开始</li>
+<li>GETBIT key-name offset 将字符串当做二进制字节串，获取偏移位置的值，要么是0，要么是1</li>
+<li>SETBIT key-name offset value 设置指定偏移位置的值</li>
+<li>BITCOUNT key-name [start end] 统计字节串中，有多少个1。可以统计子串。</li>
+<li>BITOP operation dest-key key-name [key-name …] 按位操作，操作有AND，OR，NOT，XOR。结果保存在dest-key</li>
+</ol>
+<h3 id="LIST"><a href="#LIST" class="headerlink" title="LIST"></a>LIST</h3><ol>
+<li>RPUSH key-name value [value …] 在右端存储元素</li>
+<li>LPUSH key-name value [value …] 在左端存储元素</li>
+<li>RPOP key-name 出列右端元素</li>
+<li>LPOP key-name 出列左端元素</li>
+<li>LINDEX key-name offset 获取列表中指定索引的元素（左端）</li>
+<li>LRANGE key-name start end 获取指定索引范围的元素（包含边界）</li>
+<li>LTRIM key-name start end 修剪原始列表，只剩start到end索引</li>
+</ol>
+<p>进阶，</p>
+<ol>
+<li>BLPOP key-name [key-name …] timeout 阻塞出列（左端），当没有元素时，阻塞或者超时等待。</li>
+<li>BRPOP key-name [key-name …] timeout 阻塞出列（右端）</li>
+<li>RPOPLPUSH source-key dest-key 删除source的列表尾部元素，放入dest列表头部。source和dest可以是同一个列表</li>
+<li>BRPOPLPUSH source-key dest-key 阻塞版本</li>
+</ol>
+<h3 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h3><ol>
+<li>SADD key-name item [item …] 添加元素，返回成功添加的数量</li>
+<li>SREM key-name item [item …] 删除元素，返回成功删除的数量</li>
+<li>SISMEMBER key-name item  判断元素是否在SET中。</li>
+<li>SCARD key-name 获取集合的元素数量</li>
+<li>SMEMBERS key-name 返回SET集合中所有元素</li>
+<li>SRANDMEMBER key-name [count] 随机返回一个或者多个集合中的元素。</li>
+<li>SPOP key-name  随机清除并返回一个元素</li>
+<li>SMOVE source-key dest-key item 如果元素在source集合，清除并添加至dest集合，并返回该元素</li>
+</ol>
+<p>进阶，</p>
+<ol>
+<li>SDIFF key-name [key-name …] 返回第一个集合里的相关元素，这些元素不再其他任何集合里</li>
+<li>SDIFFSTORE dest-key key-name [key-name …] 类似SDIFF，将元素存储在dest-key中</li>
+<li>SINTER key-name [key-name …] 返回所有集合共有的元素</li>
+<li>SINTERSTORE dest-key key-name [key-name …] 将集合共有的元素存储在dest-key中</li>
+<li>SUNION key-name [key-name …] 返回集合合并后的所有元素</li>
+<li>SUNIONSTORE dest-key key-name [key-name …] 将合并后的元素存储在dest-key中</li>
+</ol>
+<h3 id="HASH"><a href="#HASH" class="headerlink" title="HASH"></a>HASH</h3><ol>
+<li>HMGET key-name key [key …] 获取相关key的值</li>
+<li>HMSET key-name key value [key value …]  存储key value。</li>
+<li>HDEL key-name key [key …] 删除相应的key。返回已删除的个数。</li>
+<li>HLEN key-name  返回hash集合的个数。</li>
+</ol>
+<p>进阶，</p>
+<ol>
+<li>HEXISTS key-name key  key是否存在于指定hash集合</li>
+<li>HKEYS key-name  获取hash集合中的所有key</li>
+<li>HVALS key-name 获取hash集合中所有的value</li>
+<li>HGETALL key-name 获取hash集合中所有的key-value组合</li>
+<li>HINCRBY key-name key increment 自增提供key的值（整型增量）。</li>
+<li>HINCRBYFLOAT key-name key increment 自增提供key的值（浮点变量）。</li>
+</ol>
+<h3 id="Sorted-SET"><a href="#Sorted-SET" class="headerlink" title="Sorted SET"></a>Sorted SET</h3><ol>
+<li>ZADD key-name score member [score member …]   有序集合添加分数/成员， 分数相同，有序的字典顺序。</li>
+<li>ZREM key-name member [member]  有序集合删除相关成员。</li>
+<li>ZCARD key-name 返回有序集合成员的个数</li>
+<li>ZINCRBY key-name increment member  为有序集合的指定成员的score加上增量increment。</li>
+<li>ZCOUNT key-name min max 返回有序集合中成员的分数在最小和最大之间的数量。</li>
+<li>ZRANK  key-name member 返回指定成员的在集合中的位置（索引）。按照从小到大排列</li>
+<li>ZSCORE key-name member 返回指定成员的分数。</li>
+<li>ZRANGE key-name start stop [ WITHSCORES]  返回指定索引范围的成员（可附带分数）</li>
+</ol>
+<p>进阶，</p>
+<ol>
+<li>ZREVRANK key-name member  返回成员在有序集合的位置，与ZRANK的排序是相反的。从大到小排列。</li>
+<li>ZREVRANGE key-name start stop [WITHSCORES]  与ZRANGE的排序相反。返回指定索引范围内的成员，但是排序是从大到小。</li>
+<li>ZRANGEBYSCORE key min max [WITHSCORES] [LIMIT offset count]  分数在最小和最大之间，由低到高排序，是否返回score，limit是否分页，offset返回结果起始位置，count返回结果数量</li>
+<li>ZREVRANGEBYSCORE key max min [WITHSCORES] [LIMIT offset count]  分数在最大和最小之间，由高到低排序</li>
+<li>ZREMRANGEBYRANK key-name start stop 删除指定索引范围的成员</li>
+<li>ZREMRANGEBYSCORE key-name min max 删除指定分数范围内的成员</li>
+<li>ZINTERSTORE dest-key key-count key [key …] [WEIGHTS weight [weight …]] [AGGREGATE SUM| MIN| MAX] 将给定的有序集合的交集放到dest集合中。weights是给原来集合中的成员的score乘积因子，默认为1。 AGGREGATE 成员的分数聚合方式，默认是SUM。</li>
+<li>ZUNIONSTORE dest-key key-count key [key …] [WEIGHTS weight [weight…]] [AGGREGATE SUM| MIN| MAX]  将给定的有序集合的并集放到dest集合中。</li>
+</ol>
+<h3 id="publish-subscribe"><a href="#publish-subscribe" class="headerlink" title="publish/subscribe"></a>publish/subscribe</h3><ol>
+<li>SUBSCRIBE channel [channel …]  订阅频道</li>
+<li>UNSUBSCRIBE [channel]  取消订阅指定的或者所有的</li>
+<li>PUBLISH  channel message 发布消息到指定的频道</li>
+<li>PSUBSCRIBE pattern [pattern …]  订阅给定的模式</li>
+<li>PUNSUBSCRIBE [pattern …] 取消特定的模式的消息</li>
+</ol>
+<p>消息订阅/取消模式，有两个问题。</p>
+<ul>
+<li>Redis系统的可靠性。早前版本中，客户已经订阅了拼单，但是读消息的速度不够快，导致Redis会积压大量缓存。当足够大时，Redis会崩溃。新版本，不会有这问题，可以设置buffer size。</li>
+<li>二是数据传输可靠性，如果客户订阅频道，但是连接出问题。再重连上来之前，如果有发布消息，那么重连的客户不会收到，导致信息流失。</li>
+</ul>
+<p>需要寻求更好的解决方案，待定。</p>
+<h3 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h3><p>Sort排序命令，参数比较长，不列出来了。</p>
+<p>事务处理相关命令，WATCH，MULTI，EXEC，UNWATCH，DISCARD<br>批量执行， MULTI+多条命令+EXEC</p>
+<p>KEY过期处理，</p>
+<ol>
+<li>PERSIST key-name  清除期限时间</li>
+<li>TTL key-name  返回到过期的时间长度</li>
+<li>EXPIRE key-name seconds 设置过期的时间</li>
+<li>EXPIREAT key-name timestamp 设置过期的Unix时间戳</li>
+<li>PTTL key-name 返回到过期时间的毫秒数</li>
+<li>PEXPIRE key-name milliseconds 设置过期的毫秒数</li>
+<li>PEXPIREAT key-name timestamp-milliseconds 设置到过期时间的Unix时间戳，以毫秒为单位。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这里包含的大部分的命令，方便查找，温故知新。</p>
+</div><div class="tags"><a href="/tags/NOSQL/"><i class="fa fa-tag"></i>NOSQL</a></div><div class="post-nav"><a class="pre" href="/Redis/Redis数据存储问题/">Redis数据存储与复制</a><a class="next" href="/Java并发编程/Executor框架使用与分析五/">Executor框架使用与分析五</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://zhangzemiao.com"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CoreJava/">CoreJava</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/JVM/">JVM</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java并发编程/">Java并发编程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Redis/">Redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/hexo/">hexo</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/工作总结/">工作总结</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/工作总结/简单设计/">简单设计</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/性能优化/">性能优化</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/生活/">生活</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/缓存/">缓存</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/设计模式/">设计模式</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/面试/">面试</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/测试/" style="font-size: 15px;">测试</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/缓存/" style="font-size: 15px;">缓存</a> <a href="/tags/JVM/" style="font-size: 15px;">JVM</a> <a href="/tags/JAVA/" style="font-size: 15px;">JAVA</a> <a href="/tags/NOSQL/" style="font-size: 15px;">NOSQL</a> <a href="/tags/异常分析/" style="font-size: 15px;">异常分析</a> <a href="/tags/Spring/" style="font-size: 15px;">Spring</a> <a href="/tags/设计模式/" style="font-size: 15px;">设计模式</a> <a href="/tags/hexo/" style="font-size: 15px;">hexo</a> <a href="/tags/iText/" style="font-size: 15px;">iText</a> <a href="/tags/性能优化/" style="font-size: 15px;">性能优化</a> <a href="/tags/面试/" style="font-size: 15px;">面试</a> <a href="/tags/HR/" style="font-size: 15px;">HR</a> <a href="/tags/旅游/" style="font-size: 15px;">旅游</a> <a href="/tags/Queue/" style="font-size: 15px;">Queue</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/Java并发编程/Java并发编程/">Java并发编程指南</a></li><li class="post-list-item"><a class="post-list-link" href="/面试/如果我是招聘HR/">如果我是招聘HR</a></li><li class="post-list-item"><a class="post-list-link" href="/面试/Java技术面试反馈模板/">Java技术面试反馈</a></li><li class="post-list-item"><a class="post-list-link" href="/Redis/Redis事务及性能分析/">Redis事务及性能分析</a></li><li class="post-list-item"><a class="post-list-link" href="/hexo/迁移Hexo至MAC/">迁移Hexo至MAC</a></li><li class="post-list-item"><a class="post-list-link" href="/Redis/Redis数据存储问题/">Redis数据存储与复制</a></li><li class="post-list-item"><a class="post-list-link" href="/Redis/Redis常用命令/">Redis常用命令</a></li><li class="post-list-item"><a class="post-list-link" href="/Java并发编程/Executor框架使用与分析五/">Executor框架使用与分析五</a></li><li class="post-list-item"><a class="post-list-link" href="/Java并发编程/Executor框架使用与分析四/">Executor框架使用与分析四</a></li><li class="post-list-item"><a class="post-list-link" href="/Java并发编程/Executor框架使用与分析三/">Executor框架使用与分析三</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://github.com/WaterZhang" title="我的github" target="_blank">我的github</a><ul></ul><a href="https://gitee.com/zhangzemiao" title="我的码云" target="_blank">我的码云</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2021 <a href="/." rel="nofollow">寻找水世界.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
